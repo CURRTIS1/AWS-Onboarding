@@ -1,0 +1,65 @@
+{
+    "Description" : "ALB Cloudformation JSON",
+    "Resources" : {
+
+        "myElasticLoadBalancer" : {
+            "Type" : "AWS::ElasticLoadBalancingV2::LoadBalancer",
+            "Properties" : {
+                "IpAddressType" : "ipv4",
+                "Name" : "Curtis-ElasticLoadBalancer",
+                "Scheme" : "internet-facing",
+                "SecurityGroups" : [
+                        "sg-076c5b0e516f9511f"
+                    ],
+                "Subnets" : [
+                    "subnet-04651624f2120e893",
+                    "subnet-0c62588dcfc421137"
+                ],
+                "Type" : "application",
+                "Tags" : [
+                    {
+                        "Key" : "Name",
+                        "Value" : "Curtis-ElasticLoadBalancer"
+                    }
+                ]
+            }
+        },
+
+        "myELBListener" : {
+            "Type" : "AWS::ElasticLoadBalancingV2::Listener",
+            "Properties" : {
+                "LoadBalancerArn" : { "Ref" : "myElasticLoadBalancer" },
+                "Port" : 80,
+                "Protocol" : "HTTP",
+                "DefaultActions" : [
+                    {
+                        "TargetGroupArn" : { "Ref" : "myELBTargetGroup" },
+                        "Type" : "forward"
+                    }
+                ]
+            }
+        },
+
+        "myELBTargetGroup" : {
+            "Type" : "AWS::ElasticLoadBalancingV2::TargetGroup",
+            "Properties" : {
+                "HealthCheckEnabled" : true,
+                "HealthCheckIntervalSeconds" : 30,
+                "HealthCheckPath" : "/",
+                "HealthCheckPort" : 80,
+                "HealthCheckProtocol" : "HTTP",
+                "Port" : 80,
+                "Protocol" : "HTTP",
+                "VpcId" : "vpc-0b2481924fbe01b4f",
+                "Tags" : [
+                    {
+                        "Key" : "Name",
+                        "Value" : "Curtis-ElasticLoadBalancerTG"
+                    }
+                ]
+            }
+        }
+    },
+
+    "AWSTemplateFormatVersion": "2010-09-09"
+}

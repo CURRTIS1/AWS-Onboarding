@@ -1,0 +1,60 @@
+{
+	"Description": "ASG Cloudformation JSON",
+	"Resources": {
+		"myLaunchTemplate": {
+			"Type": "AWS::EC2::LaunchTemplate",
+			"Properties": {
+				"LaunchTemplateName": "Curtis-LaunchTemplate",
+				"LaunchTemplateData": {
+					"ImageId": "ami-09d95fab7fff3776c",
+					"InstanceType": "t2.micro",
+					"SecurityGroupIds": [
+						"sg-0ffa8c6635a23cfd0"
+					],
+					"UserData": "IyEvYmluL2Jhc2gNCg0KIyMgQXNzdW1pbmcgdGhlIHNjcmlwdCBpcyBydW4gb24gYW4gQW1hem9uIExpbnV4IDIgQU1JIEluc3RhbmNlDQpSRFNfQ05BTUU9ZGF0YWJhc2UtMS1pbnN0YW5jZS0xLmM1ZmpybXl1bWE5by51cy1lYXN0LTEucmRzLmFtYXpvbmF3cy5jb20NClJEU19VU0VSTkFNRT1hZG1pbg0KUkRTX1BBU1NXT1JEPU9uYm9hcmRpbmcyMDE5DQoNCklOU1RBTkNFPSQoY3VybCAtcyAxNjkuMjU0LjE2OS4yNTQvbGF0ZXN0L21ldGEtZGF0YS9pbnN0YW5jZS1pZCkNCg0KQVBBQ0hFX0lOREVYPS92YXIvd3d3L2h0bWwvaW5kZXgucGhwDQpQSFBfU0NSSVBUPSJKRU5QVGs0Z1BTQnRlWE54YkdsZlkyOXVibVZqZENna1VrUlRYME5PUVUxRkxDQWtVa1JUWDFWVFJWSk9RVTFGTENBa1VrUlRYMUJCVTFOWFQxSkVLVHNLYVdZZ0tDRWtRMDlPVGlrZ2V3b2dJR1JwWlNnaVEyOXVibVZqZEdsdmJpQm1ZV2xzWldRNklDSWdMaUJ0ZVhOeGJHbGZZMjl1Ym1WamRGOWxjbkp2Y2lncEtUc0tmUXBsWTJodklDSkRiMjV1WldOMFpXUWdjM1ZqWTJWemMyWjFiR3g1SUdaeWIyMGdKRWxPVTFSQlRrTkZJSFJ2SUNSU1JGTmZRMDVCVFVVaU93PT0iDQoNCg0Kc2V0dXBfYXBhY2hlX3BocF9teXNxbCAoKSB7DQogIHl1bSBpbnN0YWxsIC15IGh0dHBkIG1vZF9waHAgcGhwLW15c3FsDQogIHN5c3RlbWN0bCBlbmFibGUgaHR0cGQuc2VydmljZQ0KICBzeXN0ZW1jdGwgc3RhcnQgaHR0cGQuc2VydmljZQ0KfQ0KDQpzZXR1cF9waHBfc2NyaXB0ICgpIHsNCiAgZWNobyAnPD9waHAnID4gJHtBUEFDSEVfSU5ERVh9DQogIGVjaG8gIlwkUkRTX0NOQU1FID0gJyR7UkRTX0NOQU1FfSc7IiA+PiAke0FQQUNIRV9JTkRFWH0NCiAgZWNobyAiXCRSRFNfVVNFUk5BTUUgPSAnJHtSRFNfVVNFUk5BTUV9JzsiID4+ICR7QVBBQ0hFX0lOREVYfQ0KICBlY2hvICJcJFJEU19QQVNTV09SRCA9ICcke1JEU19QQVNTV09SRH0nOyIgPj4gJHtBUEFDSEVfSU5ERVh9DQogIGVjaG8gIlwkSU5TVEFOQ0UgPSAnJHtJTlNUQU5DRX0nOyIgPj4gJHtBUEFDSEVfSU5ERVh9DQogIGVjaG8gJHtQSFBfU0NSSVBUfSB8IGJhc2U2NCAtLWRlY29kZSA+PiAke0FQQUNIRV9JTkRFWH0NCiAgZWNobyAnPz4nID4+ICR7QVBBQ0hFX0lOREVYfQ0KfQ0KDQpzZXR1cF9hcGFjaGVfcGhwX215c3FsDQpzZXR1cF9waHBfc2NyaXB0",
+					"TagSpecifications": [{
+						"ResourceType": "instance",
+						"Tags": [{
+							"Key": "Name",
+							"Value": "Curtis-ec2"
+						}]
+					}]
+				}
+			}
+		},
+
+		"myAutoscalingGroup": {
+			"Type": "AWS::AutoScaling::AutoScalingGroup",
+			"Properties": {
+				"AutoScalingGroupName": "Curtis-Autoscale",
+				"AvailabilityZones": [
+					"us-east-1a",
+					"us-east-1b"
+				],
+				"VPCZoneIdentifier": [
+					"subnet-067390e68013364ad",
+					"subnet-0c5e2e25c8f565894"
+				],
+				"MaxSize": "2",
+				"MinSize": "2",
+				"LaunchTemplate": {
+					"LaunchTemplateId": {
+						"Ref": "myLaunchTemplate"
+					},
+					"Version": {
+						"Fn::GetAtt": [
+							"myLaunchTemplate",
+							"LatestVersionNumber"
+						]
+					}
+				},
+				"TargetGroupARNs": [
+					"arn:aws:elasticloadbalancing:us-east-1:318440121745:targetgroup/Curti-myELB-12V71IP8LQMI1/adc4011302982fb7"
+				]
+			}
+		}
+
+	},
+
+	"AWSTemplateFormatVersion": "2010-09-09"
+}

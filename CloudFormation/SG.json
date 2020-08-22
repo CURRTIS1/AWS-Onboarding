@@ -1,0 +1,76 @@
+{
+    "Description" : "SG Cloudformation JSON",
+    "Resources" : {
+
+        "mySecurityGroupWebServer" : {
+            "Type" : "AWS::EC2::SecurityGroup",
+            "Properties" : {
+                "GroupDescription" : "SecurityGroupWebServer",
+                "GroupName" : "SecurityGroupWebServer",
+                "VpcId" : "vpc-0b2481924fbe01b4f",
+                "SecurityGroupIngress" : [
+                    {
+                        "IpProtocol" : "tcp",
+                        "SourceSecurityGroupId" : { "Ref" : "mySecurityGroupALB" },
+                        "FromPort" : 80,
+                        "ToPort" : 80
+                    }
+                ],
+                "Tags" : [
+                    {
+                        "Key" : "Name",
+                        "Value" : "SecurityGroup-WebServer"
+                    }
+                ]
+            }
+        },
+        
+        "mySecurityGroupALB" : {
+            "Type" : "AWS::EC2::SecurityGroup",
+            "Properties" : {
+                "GroupDescription" : "SecurityGroupALB",
+                "GroupName" : "SecurityGroupALB",
+                "VpcId" : "vpc-0b2481924fbe01b4f",
+                "SecurityGroupIngress" : [
+                    {
+                        "IpProtocol" : "tcp",
+                        "CidrIp" : "0.0.0.0/0",
+                        "FromPort" : 80,
+                        "ToPort" : 80
+                    }
+                ],
+                "Tags" : [
+                    {
+                        "Key" : "Name",
+                        "Value" : "SecurityGroup-ALB"
+                    }
+                ]
+            }
+        },
+        
+        "mySecurityGroupDatabase" : {
+            "Type" : "AWS::EC2::SecurityGroup",
+            "Properties" : {
+                "GroupDescription" : "SecurityGroupDatabase",
+                "GroupName" : "SecurityGroupDatabase",
+                "VpcId" : "vpc-0b2481924fbe01b4f",
+                "SecurityGroupIngress" : [
+                    {
+                        "IpProtocol" : "tcp",
+                        "SourceSecurityGroupId" : { "Ref" : "mySecurityGroupWebServer" },
+                        "FromPort" : 3306,
+                        "ToPort" : 3306
+                    }
+                ],
+                "Tags" : [
+                    {
+                        "Key" : "Name",
+                        "Value" : "SecurityGroup-Database"
+                    }
+                ]
+            }
+        }
+    },
+
+    "AWSTemplateFormatVersion": "2010-09-09"
+}

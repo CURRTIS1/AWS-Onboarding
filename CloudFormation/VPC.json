@@ -1,0 +1,270 @@
+{
+    "Description" : "VPC Cloudformation JSON",
+    "Resources" : {
+
+        "myVPC" : {
+            "Type" : "AWS::EC2::VPC",
+            "Properties" : {
+                "CidrBlock" : "172.16.0.0/16",
+                "EnableDnsHostnames" : true,
+                "EnableDnsSupport" : true,
+                "InstanceTenancy" : "default",
+                "Tags" : [
+                    {
+                        "Key" : "Name",
+                        "Value" : "VPC-Curtis-Onboarding"
+                    }
+                ]
+            }
+        },
+
+        "myIG" : {
+            "Type" : "AWS::EC2::InternetGateway",
+            "Properties" : {
+                "Tags" : [
+                    {
+                        "Key" : "Name",
+                        "Value" : "IG-Curtis-Onboarding"
+                    }
+                ]
+            }
+        },
+
+        "myIGAttachment" : {
+            "Type" : "AWS::EC2::VPCGatewayAttachment",
+            "Properties" : {
+                "VpcId" : { "Ref" : "myVPC" },
+                "InternetGatewayId": { "Ref" : "myIG" }
+            }
+        },
+        
+        "mySubnetPublicA" : {
+            "Type" : "AWS::EC2::Subnet",
+            "Properties" : {
+                "AvailabilityZone" : "us-east-1a",
+                "CidrBlock" : "172.16.1.0/24",
+                "VpcId" : { "Ref" : "myVPC" },
+                "Tags" : [
+                    {
+                        "Key" : "Name",
+                        "Value" : "Public-us-east-1a"
+                    }
+                ]
+            }
+        },
+
+        "mySubnetPrivateA" : {
+            "Type" : "AWS::EC2::Subnet",
+            "Properties" : {
+                "AvailabilityZone" : "us-east-1a",
+                "CidrBlock" : "172.16.3.0/24",
+                "VpcId" : { "Ref" : "myVPC" },
+                "Tags" : [
+                    {
+                        "Key" : "Name",
+                        "Value" : "Private-us-east-1a"
+                    }
+                ]
+            }
+        },
+
+        "mySubnetPublicB" : {
+            "Type" : "AWS::EC2::Subnet",
+            "Properties" : {
+                "AvailabilityZone" : "us-east-1b",
+                "CidrBlock" : "172.16.2.0/24",
+                "VpcId" : { "Ref" : "myVPC" },
+                "Tags" : [
+                    {
+                        "Key" : "Name",
+                        "Value" : "Public-us-east-1b"
+                    }
+                ]
+            }
+        },
+
+        "mySubnetPrivateB" : {
+            "Type" : "AWS::EC2::Subnet",
+            "Properties" : {
+                "AvailabilityZone" : "us-east-1b",
+                "CidrBlock" : "172.16.4.0/24",
+                "VpcId" : { "Ref" : "myVPC" },
+                "Tags" : [
+                    {
+                        "Key" : "Name",
+                        "Value" : "Private-us-east-1b"
+                    }
+                ]
+            }
+        },
+
+        "myNatGatewayA" : {
+            "Type" : "AWS::EC2::NatGateway",
+            "Properties" : {
+                "AllocationId" : { "Fn::GetAtt" : ["myElasticIPA", "AllocationId"] },
+                "SubnetId" : { "Ref" : "mySubnetPublicA" },
+                "Tags" : [
+                    {
+                        "Key" : "Name",
+                        "Value" : "NatGateway-Public-us-east-1a"
+                    }
+                ]
+            }
+        },
+
+        "myElasticIPA" : {
+            "DependsOn" : "myIGAttachment",
+            "Type" : "AWS::EC2::EIP",
+            "Properties" : {
+                "Domain" : "vpc"
+            }
+
+        },
+
+        "myNatGatewayB" : {
+            "Type" : "AWS::EC2::NatGateway",
+            "Properties" : {
+                "AllocationId" : { "Fn::GetAtt" : ["myElasticIPB", "AllocationId"] },
+                "SubnetId" : { "Ref" : "mySubnetPublicB" },
+                "Tags" : [
+                    {
+                        "Key" : "Name",
+                        "Value" : "NatGateway-Public-us-east-1b"
+                    }
+                ]
+            }
+        },
+
+        "myElasticIPB" : {
+            "DependsOn" : "myIGAttachment",
+            "Type" : "AWS::EC2::EIP",
+            "Properties" : {
+                "Domain" : "vpc"
+            }
+
+        },
+
+        "myRouteTablePublicA" : {
+            "Type" : "AWS::EC2::RouteTable",
+            "Properties" : {
+                "VpcId" : { "Ref" : "myVPC" },
+                "Tags" : [
+                    {
+                        "Key" : "Name",
+                        "Value" : "RouteTable-PublicA"
+                    }
+                ]
+            }
+        },
+
+        "myRouteTablePrivateA" : {
+            "Type" : "AWS::EC2::RouteTable",
+            "Properties" : {
+                "VpcId" : { "Ref" : "myVPC" },
+                "Tags" : [
+                    {
+                        "Key" : "Name",
+                        "Value" : "RouteTable-PrivateA"
+                    }
+                ]
+            }
+        },
+
+        "myRouteTablePublicB" : {
+            "Type" : "AWS::EC2::RouteTable",
+            "Properties" : {
+                "VpcId" : { "Ref" : "myVPC" },
+                "Tags" : [
+                    {
+                        "Key" : "Name",
+                        "Value" : "RouteTable-PublicB"
+                    }
+                ]
+            }
+        },
+
+        "myRouteTablePrivateB" : {
+            "Type" : "AWS::EC2::RouteTable",
+            "Properties" : {
+                "VpcId" : { "Ref" : "myVPC" },
+                "Tags" : [
+                    {
+                        "Key" : "Name",
+                        "Value" : "RouteTable-PrivateB"
+                    }
+                ]
+            }
+        },
+
+        "myRouteTableAssociationPublicA" : {
+            "Type" : "AWS::EC2::SubnetRouteTableAssociation",
+            "Properties" : {
+                "RouteTableId" : { "Ref" : "myRouteTablePublicA" },
+                "SubnetId" : { "Ref" : "mySubnetPublicA" }
+            }
+        },
+
+        "myRouteTableAssociationPrivateA" : {
+            "Type" : "AWS::EC2::SubnetRouteTableAssociation",
+            "Properties" : {
+                "RouteTableId" : { "Ref" : "myRouteTablePrivateA" },
+                "SubnetId" : { "Ref" : "mySubnetPrivateA" }
+            }
+        },
+
+        "myRouteTableAssociationPublicB" : {
+            "Type" : "AWS::EC2::SubnetRouteTableAssociation",
+            "Properties" : {
+                "RouteTableId" : { "Ref" : "myRouteTablePublicB" },
+                "SubnetId" : { "Ref" : "mySubnetPublicB" }
+            }
+        },
+
+        "myRouteTableAssociationPrivateB" : {
+            "Type" : "AWS::EC2::SubnetRouteTableAssociation",
+            "Properties" : {
+                "RouteTableId" : { "Ref" : "myRouteTablePrivateB" },
+                "SubnetId" : { "Ref" : "mySubnetPrivateB" }
+            }
+        },
+
+        "myRoutePublicA" : {
+            "Type" : "AWS::EC2::Route",
+            "Properties" : {
+                "RouteTableId" : { "Ref" : "myRouteTablePublicA" },
+                "DestinationCidrBlock" : "0.0.0.0/0",
+                "GatewayId" : { "Ref" : "myIG"}
+            }
+        },
+
+        "myRoutePrivateA" : {
+            "Type" : "AWS::EC2::Route",
+            "Properties" : {
+                "RouteTableId" : { "Ref" : "myRouteTablePrivateA" },
+                "DestinationCidrBlock" : "0.0.0.0/0",
+                "NatGatewayId" : { "Ref" : "myNatGatewayA"}
+            }
+        },
+
+        "myRoutePublicB" : {
+            "Type" : "AWS::EC2::Route",
+            "Properties" : {
+                "RouteTableId" : { "Ref" : "myRouteTablePublicB" },
+                "DestinationCidrBlock" : "0.0.0.0/0",
+                "GatewayId" : { "Ref" : "myIG"}
+            }
+        },
+
+        "myRoutePrivateB" : {
+            "Type" : "AWS::EC2::Route",
+            "Properties" : {
+                "RouteTableId" : { "Ref" : "myRouteTablePrivateB" },
+                "DestinationCidrBlock" : "0.0.0.0/0",
+                "NatGatewayId" : { "Ref" : "myNatGatewayB"}
+            }
+        }
+
+    },
+
+    "AWSTemplateFormatVersion": "2010-09-09"
+}
