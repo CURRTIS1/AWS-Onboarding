@@ -4,7 +4,7 @@ variable "region" {
 }
 
 variable "environment" {
-  description = "Build environment"
+  description = ""Build environment""
   type        = string
 }
 
