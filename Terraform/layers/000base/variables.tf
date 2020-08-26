@@ -19,7 +19,7 @@ variable "layer" {
 
 variable "state_bucket" {
   description = "The bucket to store the terraform state"
-  default     = "Curtis-Terraform-Test-2020"
+  default     = "Curtis-Terraform-Test-2020b"
 }
 
 variable "instance_type" {
