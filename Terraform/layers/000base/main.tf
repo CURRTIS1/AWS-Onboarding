@@ -34,6 +34,7 @@ resource "aws_vpc" "main_vpc" {
   cidr_block         = var.vpc_cidr
   instance_tenancy   = "default"
   enable_dns_support = true
+
   tags = merge(
     local.tags,
     {
@@ -47,6 +48,7 @@ resource "aws_vpc" "main_vpc" {
 
 resource "aws_internet_gateway" "main_IGW" {
   vpc_id = aws_vpc.main_vpc.id
+
   tags = merge(
     local.tags,
     {
@@ -64,6 +66,7 @@ resource "aws_subnet" "subnet_Public" {
   cidr_block        = var.subnet_Public_range[count.index]
   availability_zone = var.availability_zones[count.index]
   map_public_ip_on_launch = true
+
   tags = merge(
     local.tags,
     {
@@ -77,6 +80,7 @@ resource "aws_subnet" "subnet_Private" {
   vpc_id            = aws_vpc.main_vpc.id
   cidr_block        = var.subnet_Private_range[count.index]
   availability_zone = var.availability_zones[count.index]
+
   tags = merge(
     local.tags,
     {
@@ -90,9 +94,10 @@ resource "aws_subnet" "subnet_Private" {
 ## Elastic IPs
 
 resource "aws_eip" "NatGWIP" {
-  vpc        = true
   count      = 2
+  vpc        = true
   depends_on = [aws_internet_gateway.main_IGW]
+
   tags = merge(
     local.tags,
     {
@@ -110,6 +115,7 @@ resource "aws_nat_gateway" "NatGW" {
   allocation_id = element(aws_eip.NatGWIP.*.id, count.index)
   subnet_id = element(aws_subnet.subnet_Public.*.id, count.index)
   depends_on    = [aws_internet_gateway.main_IGW]
+
   tags = merge(
     local.tags,
     {
@@ -124,7 +130,6 @@ resource "aws_nat_gateway" "NatGW" {
 
 resource "aws_route_table" "routetable_public" {
   vpc_id            = aws_vpc.main_vpc.id
-  
   route {
     cidr_block = "0.0.0.0/0"
     gateway_id = aws_internet_gateway.main_IGW.id
