@@ -2,6 +2,15 @@
  * # 000base - main.tf
  */
 
+terraform {
+  required_version = "0.13.0"
+
+  backend "S3" {
+    bucket = "Curtis-Terraform-Test-2020"
+    key = "terraform.000base.tfstate"
+    region     = var.region
+  }
+}
 
 provider "aws" {
   region     = var.region
