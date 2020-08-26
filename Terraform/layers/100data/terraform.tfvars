@@ -1,5 +1,5 @@
 /**
- * # 000base - terraform.tfvars
+ * # 100data - terraform.tfvars
  */
 
 region      = "us-east-1"

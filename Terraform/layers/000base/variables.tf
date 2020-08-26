@@ -1,5 +1,5 @@
 /**
- * # 000base - variabls.tf
+ * # 000base - variables.tf
  */
 
 variable "region" {
@@ -27,20 +27,6 @@ variable "instance_type" {
   default     = "t2.micro"
 }
 
-variable "AMI_type" {
-  description = "The AMI to use"
-  default     = "ami-02354e95b39ca8dec"
-}
-
-variable "autoscale_max" {
-  description = "The max number of ec2 instances in the asg"
-  default     = 1
-}
-
-variable "autoscale_min" {
-  description = "The min number of ec2 instances in the asg"
-  default     = 1
-}
 
 variable "alb_name" {
   description = "The readable friendly name of the load balancer"
