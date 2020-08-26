@@ -17,6 +17,11 @@ variable "layer" {
   type        = string
 }
 
+variable "state_bucket" {
+  description = "The bucket to store the terraform state"
+  default     = "Curtis-Terraform-Test-2020"
+}
+
 variable "instance_type" {
   description = "The type of EC2 instance to use"
   default     = "t2.micro"
