@@ -17,19 +17,27 @@ variable "layer" {
   type        = string
 }
 
-variable "state_bucket" {
-  description = "The bucket to store the terraform state"
-  default     = "Curtis-Terraform-Test-2020b"
+variable "vpc_cidr" {
+  description = "VPC main CIDR"
+  type        = string
 }
 
-variable "instance_type" {
-  description = "The type of EC2 instance to use"
-  default     = "t2.micro"
+variable "subnet_PublicA" {
+  description = "VPC Public Subnet A"
+  type        = string
 }
 
-
-variable "alb_name" {
-  description = "The readable friendly name of the load balancer"
-  default     = "my-alb"
+variable "subnet_PrivateA" {
+  description = "VPC Private Subnet A"
+  type        = string
 }
 
+variable "subnet_PublicB" {
+  description = "VPC Public Subnet B"
+  type        = string
+}
+
+variable "subnet_PrivateB" {
+  description = "VPC Private Subnet B"
+  type        = string
+}
