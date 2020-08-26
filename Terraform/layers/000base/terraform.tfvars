@@ -10,10 +10,17 @@ layer = "000base"
 
 vpc_cidr = "172.16.0.0/16"
 
-subnet_PublicA = "172.16.1.0/24"
+subnet_Public_range = [
+  "172.16.1.0/24",
+  "172.16.2.0/24"
+]
 
-subnet_PrivateA = "172.16.3.0/24"
+subnet_Private_range = [
+  "172.16.3.0/24",
+  "172.16.4.0/24"
+]
 
-subnet_PublicB = "172.16.2.0/24"
-
-subnet_PrivateB = "172.16.4.0/24"
+availability_zones = [
+  "us-east-1a",
+  "us-east-1b"
+]
