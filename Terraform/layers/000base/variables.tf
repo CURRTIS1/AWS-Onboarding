@@ -1,4 +1,9 @@
-variable "region" {
+variable
+ /**
+ * # 000base - variabls.tf
+ */
+ 
+ "region" {
   description = "The region are building into."
   type        = string
 }
