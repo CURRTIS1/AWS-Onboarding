@@ -1,3 +1,0 @@
-/**
- * # 100data - outputs.tf
- */
