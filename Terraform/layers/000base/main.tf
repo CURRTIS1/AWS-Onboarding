@@ -9,6 +9,7 @@ terraform {
     bucket = "curtis-terraform-test-2020"
     key    = "terraform.000base.tfstate"
     region = "us-east-1"
+    encrypt = true
   }
 }
 
@@ -16,6 +17,8 @@ terraform {
 provider "aws" {
   version = "~> 3.3.0"
   region  = var.region
+  access_key = var.aws_access_key
+  secret_key = var.aws_secret_key
 }
 
 
@@ -26,6 +29,7 @@ locals {
     Terraform   = "true"
   }
 }
+
 
 ## ----------------------------------
 ## Main VPC
@@ -43,6 +47,7 @@ resource "aws_vpc" "main_vpc" {
   )
 }
 
+
 ## ----------------------------------
 ## Internet Gateway
 
@@ -56,6 +61,7 @@ resource "aws_internet_gateway" "main_IGW" {
     }
   )
 }
+
 
 ## ----------------------------------
 ## Subnets
