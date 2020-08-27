@@ -8,7 +8,7 @@
 
   backend "s3" {
     bucket = "curtis-terraform-test-2020"
-    key    = "terraform.100data.tfstate"
+    key    = "terraform.100security.tfstate"
     region = "us-east-1"
   }
 }

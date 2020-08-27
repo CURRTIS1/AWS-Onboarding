@@ -1,5 +1,5 @@
 /**
- * # 200compute - variables.tf
+ * # 300compute - variables.tf
  */
 
 variable "AMI_type" {

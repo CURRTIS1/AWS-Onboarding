@@ -1,5 +1,5 @@
 /**
- * # 200compute - main.tf
+ * # 300compute - main.tf
  */
 
 terraform {
@@ -7,7 +7,7 @@ terraform {
 
   backend "s3" {
     bucket = "curtis-terraform-test-2020"
-    key    = "terraform.200compute.tfstate"
+    key    = "terraform.300compute.tfstate"
     region = "us-east-1"
   }
 }
