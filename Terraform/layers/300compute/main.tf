@@ -3,7 +3,7 @@
  */
 
 terraform {
-  required_version = "0.13.0"
+  required_version = "0.13.4"
 
   backend "s3" {
     bucket = "curtis-terraform-test-2020"
