@@ -2,9 +2,14 @@
  * # 300compute - variables.tf
  */
 
-variable "AMI_type" {
+variable "ami_type_linux" {
   description = "The AMI to use"
-  default     = "ami-02354e95b39ca8dec"
+  default     = "ami-0947d2ba12ee1ff75"
+}
+
+variable "ami_type_windows" {
+  description = "The AMI to use"
+  default     = "ami-0eb7fbcc77e5e6ec6"
 }
 
 variable "autoscale_max" {
@@ -21,7 +26,6 @@ variable "instance_type" {
   description = "The type of EC2 instance to use"
   default     = "t2.micro"
 }
-
 
 variable "alb_name" {
   description = "The readable friendly name of the load balancer"
