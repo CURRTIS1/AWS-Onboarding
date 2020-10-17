@@ -2,6 +2,21 @@
  * # 300compute - variables.tf
  */
 
+variable "region" {
+  description = "The region are building into."
+  type        = string
+}
+
+variable "environment" {
+  description = "Build environment"
+  type        = string
+}
+
+variable "layer" {
+  description = "Terraform layer"
+  type        = string
+}
+
 variable "ami_type_linux" {
   description = "The AMI to use"
   default     = "ami-0947d2ba12ee1ff75"

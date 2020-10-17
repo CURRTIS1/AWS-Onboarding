@@ -17,3 +17,8 @@
   description = "The ID of the RDS Group"
 }
  */
+
+output "SG_Web" {
+  value       = aws_security_group.SG_Web.id 
+  description = "The ID of the WebServer Group"
+}
