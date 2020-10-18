@@ -22,12 +22,12 @@ variable "vpc_cidr" {
   type        = string
 }
 
-variable "subnet_Public_range" {
+variable "subnet_public_range" {
   description = "VPC Public CIDR range"
   type        = list(string)
 }
 
-variable "subnet_Private_range" {
+variable "subnet_private_range" {
   description = "VPC Private CIDR range"
   type        = list(string)
 }

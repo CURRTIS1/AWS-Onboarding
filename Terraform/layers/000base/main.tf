@@ -24,9 +24,9 @@ provider "aws" {
 
 locals {
   tags = {
-    Environment = var.environment
-    Layer       = var.layer
-    Terraform   = "true"
+    environment = var.environment
+    layer       = var.layer
+    terraform   = "true"
   }
 }
 
@@ -80,7 +80,7 @@ resource "aws_vpc" "main_vpc" {
 ## ----------------------------------
 ## Internet Gateway
 
-resource "aws_internet_gateway" "main_IGW" {
+resource "aws_internet_gateway" "main_igw" {
   vpc_id = aws_vpc.main_vpc.id
 
   tags = merge(
@@ -95,10 +95,10 @@ resource "aws_internet_gateway" "main_IGW" {
 ## ----------------------------------
 ## Subnets
 
-resource "aws_subnet" "subnet_Public" {
+resource "aws_subnet" "subnet_public" {
   count = 2
   vpc_id            = aws_vpc.main_vpc.id
-  cidr_block        = var.subnet_Public_range[count.index]
+  cidr_block        = var.subnet_public_range[count.index]
   availability_zone = var.availability_zones[count.index]
   map_public_ip_on_launch = true
 
@@ -110,10 +110,10 @@ resource "aws_subnet" "subnet_Public" {
   )
 }
 
-resource "aws_subnet" "subnet_Private" {
+resource "aws_subnet" "subnet_private" {
   count = 2
   vpc_id            = aws_vpc.main_vpc.id
-  cidr_block        = var.subnet_Private_range[count.index]
+  cidr_block        = var.subnet_private_range[count.index]
   availability_zone = var.availability_zones[count.index]
 
   tags = merge(
@@ -128,10 +128,10 @@ resource "aws_subnet" "subnet_Private" {
 ## ----------------------------------
 ## Elastic IPs
 
-resource "aws_eip" "NatGWIP" {
+resource "aws_eip" "natgwip" {
   count      = 2
   vpc        = true
-  depends_on = [aws_internet_gateway.main_IGW]
+  depends_on = [aws_internet_gateway.main_igw]
 
   tags = merge(
     local.tags,
@@ -145,11 +145,11 @@ resource "aws_eip" "NatGWIP" {
 ## ----------------------------------
 ## Nat Gateway
 
-resource "aws_nat_gateway" "NatGW" {
+resource "aws_nat_gateway" "natgw" {
   count = 2
-  allocation_id = element(aws_eip.NatGWIP.*.id, count.index)
-  subnet_id = element(aws_subnet.subnet_Public.*.id, count.index)
-  depends_on    = [aws_internet_gateway.main_IGW]
+  allocation_id = element(aws_eip.natgwip.*.id, count.index)
+  subnet_id = element(aws_subnet.subnet_public.*.id, count.index)
+  depends_on    = [aws_internet_gateway.main_igw]
 
   tags = merge(
     local.tags,
@@ -167,7 +167,7 @@ resource "aws_route_table" "routetable_public" {
   vpc_id            = aws_vpc.main_vpc.id
   route {
     cidr_block = "0.0.0.0/0"
-    gateway_id = aws_internet_gateway.main_IGW.id
+    gateway_id = aws_internet_gateway.main_igw.id
   }
 
   tags = merge(
@@ -184,7 +184,7 @@ resource "aws_route_table" "routetable_private" {
   count = 2
   route {
     cidr_block = "0.0.0.0/0"
-    nat_gateway_id = element(aws_nat_gateway.NatGW.*.id, count.index)
+    nat_gateway_id = element(aws_nat_gateway.natgw.*.id, count.index)
   }
 
   tags = merge(
@@ -201,12 +201,12 @@ resource "aws_route_table" "routetable_private" {
 
 resource "aws_route_table_association" "routetableassociation_public" {
   count = 2
-  subnet_id = element(aws_subnet.subnet_Public.*.id, count.index)
+  subnet_id = element(aws_subnet.subnet_public.*.id, count.index)
   route_table_id = aws_route_table.routetable_public.id
 }
 
 resource "aws_route_table_association" "routetableassociation_private" {
   count = 2
-  subnet_id = element(aws_subnet.subnet_Private.*.id, count.index)
+  subnet_id = element(aws_subnet.subnet_private.*.id, count.index)
   route_table_id = element(aws_route_table.routetable_private.*.id, count.index)
 }

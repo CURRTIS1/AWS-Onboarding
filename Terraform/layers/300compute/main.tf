@@ -22,9 +22,9 @@ provider "aws" {
 
 locals {
   tags = {
-    Environment = var.environment
-    Layer       = var.layer
-    Terraform   = "true"
+    environment = var.environment
+    layer       = var.layer
+    terraform   = "true"
   }
 }
 
@@ -53,7 +53,7 @@ data "terraform_remote_state" "state_100security" {
 resource "aws_instance" "ec2_instance_windows" {
   ami                    = var.ami_type_windows
   instance_type          = var.instance_type
-  vpc_security_group_ids = [data.terraform_remote_state.state_100security.outputs.SG_Web]
+  vpc_security_group_ids = [data.terraform_remote_state.state_100security.outputs.sg_web]
   subnet_id              = data.terraform_remote_state.state_000base.outputs.subnet_public[0]
   iam_instance_profile   = data.terraform_remote_state.state_000base.outputs.ssm_profile
 
@@ -65,10 +65,14 @@ resource "aws_instance" "ec2_instance_windows" {
   )
 }
 
+
+## ----------------------------------
+## Linux test instance
+
 resource "aws_instance" "ec2_instance_linux" {
   ami                    = var.ami_type_linux
   instance_type          = var.instance_type
-  vpc_security_group_ids = [data.terraform_remote_state.state_100security.outputs.SG_Web]
+  vpc_security_group_ids = [data.terraform_remote_state.state_100security.outputs.sg_web]
   subnet_id              = data.terraform_remote_state.state_000base.outputs.subnet_public[0]
   iam_instance_profile   = data.terraform_remote_state.state_000base.outputs.ssm_profile
 

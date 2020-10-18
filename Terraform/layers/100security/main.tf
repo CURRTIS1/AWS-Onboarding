@@ -24,9 +24,9 @@ provider "aws" {
 
 locals {
   tags = {
-    Environment = var.environment
-    Layer       = var.layer
-    Terraform   = "true"
+    environment = var.environment
+    layer       = var.layer
+    terraform   = "true"
   }
 }
 
@@ -42,7 +42,7 @@ data "terraform_remote_state" "state_000base" {
 ## ----------------------------------
 ## Security Groups
 
-resource "aws_security_group" "SG_ALB" {
+resource "aws_security_group" "sg_alb" {
   name   = "ALB Security Group"
   description = "ALB Security Group"
   vpc_id = data.terraform_remote_state.state_000base.outputs.vpc_id
@@ -55,7 +55,7 @@ resource "aws_security_group" "SG_ALB" {
   }
 }
 
-resource "aws_security_group" "SG_Web" {
+resource "aws_security_group" "sg_web" {
   name   = "WebServer Security Group"
   description = "WebServer Security Group"
   vpc_id = data.terraform_remote_state.state_000base.outputs.vpc_id
@@ -64,11 +64,11 @@ resource "aws_security_group" "SG_Web" {
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
-    security_groups = [aws_security_group.SG_ALB.id]
+    security_groups = [aws_security_group.sg_alb.id]
   }
 }
 
-resource "aws_security_group" "SG_RDS" {
+resource "aws_security_group" "sg_rds" {
   name   = "RDS Security Group"
   description = "RDS Security Group"
   vpc_id = data.terraform_remote_state.state_000base.outputs.vpc_id
@@ -77,6 +77,6 @@ resource "aws_security_group" "SG_RDS" {
     from_port   = 3306
     to_port     = 3306
     protocol    = "tcp"
-    security_groups = [aws_security_group.SG_Web.id]
+    security_groups = [aws_security_group.sg_web.id]
   }
 }

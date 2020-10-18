@@ -18,7 +18,7 @@
 }
  */
 
-output "SG_Web" {
-  value       = aws_security_group.SG_Web.id 
+output "sg_web" {
+  value       = aws_security_group.sg_web.id 
   description = "The ID of the WebServer Group"
 }
