@@ -2,7 +2,6 @@
  * # 100security - main.tf
  */
 
-
 terraform {
   required_version = "0.13.4"
 
@@ -21,7 +20,6 @@ provider "aws" {
   secret_key = var.aws_secret_key
 }
 
-
 locals {
   tags = {
     environment = var.environment
@@ -38,6 +36,7 @@ data "terraform_remote_state" "state_000base" {
     region = "us-east-1"
   }
 }
+
 
 ## ----------------------------------
 ## Security Groups
