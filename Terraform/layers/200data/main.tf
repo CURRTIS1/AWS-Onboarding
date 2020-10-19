@@ -79,5 +79,6 @@ resource "aws_db_instance" "myrdsinstance" {
   db_subnet_group_name = aws_db_subnet_group.myrdsgroup.id
   username = "admin"
   password = "Onboarding2020"
+  skip_final_snapshot = true
   vpc_security_group_ids = [data.terraform_remote_state.state_100security.outputs.sg_rds]
 }
