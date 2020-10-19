@@ -81,4 +81,8 @@ resource "aws_db_instance" "myrdsinstance" {
   password = "Onboarding2020"
   skip_final_snapshot = true
   vpc_security_group_ids = [data.terraform_remote_state.state_100security.outputs.sg_rds]
+
+  tags = merge(
+    local.tags
+  )
 }

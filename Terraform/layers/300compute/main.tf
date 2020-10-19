@@ -45,44 +45,24 @@ data "terraform_remote_state" "state_100security" {
   }
 }
 
+data "terraform_remote_state" "state_200data" {
+  backend = "s3"
+  config = {
+    bucket = "curtis-terraform-test-2020"
+    key    = "terraform.200data.tfstate"
+    region = "us-east-1"
+  }
+}
+
 
 ## ----------------------------------
-## Windows test instance
-/**
-resource "aws_instance" "ec2_instance_windows" {
-  ami                    = var.ami_type_windows
-  instance_type          = var.instance_type
-  vpc_security_group_ids = [data.terraform_remote_state.state_100security.outputs.sg_web]
-  subnet_id              = data.terraform_remote_state.state_000base.outputs.subnet_public[0]
-  iam_instance_profile   = data.terraform_remote_state.state_000base.outputs.ssm_profile
+## EC2 Key Pair
 
-  tags = merge(
-    local.tags,
-    {
-      Name = "Test Windows Instance"
-    }
-  )
+resource "aws_key_pair" "mykp" {
+  key_name   = "Onboarding2020-key"
+  public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCxEjd30DO25FSHbpUEzmcGetk/vSP7u0TRkuISLhOudze5ULm6vyV6F+Tv4lNezINnc2U9JhDBU+wlxLXsbN1mefPVVl9w5suVARDz54z20T2IoXulme04RjteqeKkMw2/L5iSbc+uTJj59C57D/BJqxd54P+yLAbYB5QCcnACaCqHYEAJjWv5hQS5XE0WNmRzVkohsD7IoanmF23RRwXsS5tuoqObcjDUOruUj4/t/6lLXA6TwNE+f/XWD4mxBK0Ec1YX7IVGDfhvBHJ+03nY6xiQkLEqNyzLlGT9Y1S+9W/6z8O0TlzH79z3FuoPUTPlhUtdTYtt81RUTTxpKrDN curtis@CURTIS-mac"
 }
- */
 
-## ----------------------------------
-## Linux test instance
-/**
-resource "aws_instance" "ec2_instance_linux" {
-  ami                    = var.ami_type_linux
-  instance_type          = var.instance_type
-  vpc_security_group_ids = [data.terraform_remote_state.state_100security.outputs.sg_web]
-  subnet_id              = data.terraform_remote_state.state_000base.outputs.subnet_public[0]
-  iam_instance_profile   = data.terraform_remote_state.state_000base.outputs.ssm_profile
-
-  tags = merge(
-    local.tags,
-    {
-      Name = "Test Linux Instance"
-    }
-  )
-}
- */
 
 ## ----------------------------------
 ## ELB Target Group
@@ -111,7 +91,6 @@ resource "aws_lb" "myelb" {
   security_groups = [data.terraform_remote_state.state_100security.outputs.sg_alb]
   ip_address_type = "ipv4"
   internal = false
-
 }
 
 
@@ -130,12 +109,14 @@ resource "aws_lb_listener" "myelblistener" {
 
 
 ## ----------------------------------
-## ASG Launch Configuration
+## ASG Launch Template
 
 resource "aws_launch_template" "mylaunchtemplate" {
   image_id = var.ami_type_linux
   instance_type = var.instance_type
+  key_name = aws_key_pair.mykp.id
   vpc_security_group_ids = [data.terraform_remote_state.state_100security.outputs.sg_web]
+  user_data = base64encode(templatefile("user_data.tpl", {rds_name = data.terraform_remote_state.state_200data.outputs.rds_cname}))
   iam_instance_profile {
     name = data.terraform_remote_state.state_000base.outputs.ssm_profile
   }
@@ -163,3 +144,16 @@ resource "aws_autoscaling_group" "myasg" {
     propagate_at_launch = true
   }
 }
+
+
+## ----------------------------------
+## EC2 User Data
+/**
+
+data "template_file" "userdatascript" {
+  template = file("./user_data.tpl")
+  vars = {
+    rds_name = data.terraform_remote_state.state_200data.outputs.rds_cname
+  }
+}
+*/

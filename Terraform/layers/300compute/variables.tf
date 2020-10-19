@@ -29,12 +29,12 @@ variable "ami_type_windows" {
 
 variable "autoscale_max" {
   description = "The max number of ec2 instances in the asg"
-  default     = 2
+  default     = 1
 }
 
 variable "autoscale_min" {
   description = "The min number of ec2 instances in the asg"
-  default     = 2
+  default     = 1
 }
 
 variable "instance_type" {

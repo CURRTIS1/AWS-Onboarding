@@ -65,6 +65,7 @@ resource "aws_vpc" "main_vpc" {
   cidr_block         = var.vpc_cidr
   instance_tenancy   = "default"
   enable_dns_support = true
+  enable_dns_hostnames = true
 
   tags = merge(
     local.tags,
@@ -207,4 +208,17 @@ resource "aws_route_table_association" "routetableassociation_private" {
   count = 2
   subnet_id = element(aws_subnet.subnet_private.*.id, count.index)
   route_table_id = element(aws_route_table.routetable_private.*.id, count.index)
+}
+
+
+## ----------------------------------
+## SSM 
+
+resource "aws_ssm_association" "ssm_install" {
+  name = "AWS-UpdateSSMAgent"
+  association_name = "Onboarding2020-SystemAssociationForSsmAgentUpdate"
+  targets {
+    key    = "InstanceIds"
+    values = ["*"]
+  }
 }
