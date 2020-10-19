@@ -3,7 +3,7 @@
  */
 
 variable "region" {
-  description = "The region are building into."
+  description = "The region we are building into."
   type        = string
 }
 
@@ -29,12 +29,12 @@ variable "ami_type_windows" {
 
 variable "autoscale_max" {
   description = "The max number of ec2 instances in the asg"
-  default     = 1
+  default     = 2
 }
 
 variable "autoscale_min" {
   description = "The min number of ec2 instances in the asg"
-  default     = 1
+  default     = 2
 }
 
 variable "instance_type" {
@@ -45,4 +45,9 @@ variable "instance_type" {
 variable "alb_name" {
   description = "The readable friendly name of the load balancer"
   default     = "my-alb"
+}
+
+variable "availability_zones" {
+  description = "List of availability zones"
+  type        = list(string)
 }

@@ -3,7 +3,7 @@
  */
 
 variable "region" {
-  description = "The region are building into."
+  description = "The region we are building into."
   type        = string
 }
 

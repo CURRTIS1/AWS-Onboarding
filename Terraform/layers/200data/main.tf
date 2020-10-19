@@ -1,5 +1,12 @@
 /**
  * # 200data - main.tf
+
+ RDS Limits
+ONLY these Instance Types are allowed:
+db.t2.micro to db.t2.medium
+db.t3.micro to db.t3.medium
+Cannot use Provisioned IOPS
+Max Storage size of 50GB
  */
 
 
@@ -48,4 +55,29 @@ data "terraform_remote_state" "state_100security" {
 
 
 ## ----------------------------------
-## RD Subnet Group
+## RDS Subnet Group
+
+resource "aws_db_subnet_group" "myrdsgroup" {
+  name = "my-rds-subnet-group"
+  subnet_ids = data.terraform_remote_state.state_000base.outputs.subnet_private
+}
+
+
+## ----------------------------------
+## RDS Instancs
+
+resource "aws_db_instance" "myrdsinstance" {
+  allocated_storage = 20
+  storage_type = "gp2"
+  engine = "mysql"
+  engine_version = "5.6.46"
+  instance_class = "db.t2.small"
+  name = "db1"
+  multi_az = true
+  identifier = "database-1-instance-1"
+  port = 3306
+  db_subnet_group_name = aws_db_subnet_group.myrdsgroup.id
+  username = "admin"
+  password = "Onboarding2020"
+  vpc_security_group_ids = [data.terraform_remote_state.state_100security.outputs.sg_rds]
+}
