@@ -116,7 +116,13 @@ resource "aws_launch_template" "mylaunchtemplate" {
   instance_type = var.instance_type
   key_name = aws_key_pair.mykp.id
   vpc_security_group_ids = [data.terraform_remote_state.state_100security.outputs.sg_web]
-  user_data = base64encode(templatefile("user_data.tpl", {rds_name = data.terraform_remote_state.state_200data.outputs.rds_cname}))
+  user_data = base64encode(
+    templatefile(
+      "user_data.tpl", {
+        rds_name = data.terraform_remote_state.state_200data.outputs.rds_cname
+      }
+    )
+  )
   iam_instance_profile {
     name = data.terraform_remote_state.state_000base.outputs.ssm_profile
   }
