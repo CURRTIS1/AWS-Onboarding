@@ -6,16 +6,16 @@ terraform {
   required_version = "0.13.4"
 
   backend "s3" {
-    bucket = "curtis-terraform-test-2020"
-    key    = "terraform.000base.tfstate"
-    region = "us-east-1"
+    bucket  = "curtis-terraform-test-2020"
+    key     = "terraform.000base.tfstate"
+    region  = "us-east-1"
     encrypt = true
   }
 }
 
 provider "aws" {
-  version = "~> 3.3.0"
-  region  = var.region
+  version    = "~> 3.3.0"
+  region     = var.region
   access_key = var.aws_access_key
   secret_key = var.aws_secret_key
 }
@@ -53,7 +53,7 @@ resource "aws_iam_role_policy_attachment" "ssmrole_attach" {
 }
 
 resource "aws_iam_instance_profile" "ssm_profile" {
-  name  = "ssm_profile"
+  name = "ssm_profile"
   role = aws_iam_role.ssm_role.name
 }
 
@@ -62,9 +62,9 @@ resource "aws_iam_instance_profile" "ssm_profile" {
 ## Main VPC
 
 resource "aws_vpc" "main_vpc" {
-  cidr_block         = var.vpc_cidr
-  instance_tenancy   = "default"
-  enable_dns_support = true
+  cidr_block           = var.vpc_cidr
+  instance_tenancy     = "default"
+  enable_dns_support   = true
   enable_dns_hostnames = true
 
   tags = merge(
@@ -95,10 +95,10 @@ resource "aws_internet_gateway" "main_igw" {
 ## Subnets
 
 resource "aws_subnet" "subnet_public" {
-  count = 2
-  vpc_id            = aws_vpc.main_vpc.id
-  cidr_block        = var.subnet_public_range[count.index]
-  availability_zone = var.availability_zones[count.index]
+  count                   = 2
+  vpc_id                  = aws_vpc.main_vpc.id
+  cidr_block              = var.subnet_public_range[count.index]
+  availability_zone       = var.availability_zones[count.index]
   map_public_ip_on_launch = true
 
   tags = merge(
@@ -110,7 +110,7 @@ resource "aws_subnet" "subnet_public" {
 }
 
 resource "aws_subnet" "subnet_private" {
-  count = 2
+  count             = 2
   vpc_id            = aws_vpc.main_vpc.id
   cidr_block        = var.subnet_private_range[count.index]
   availability_zone = var.availability_zones[count.index]
@@ -145,9 +145,9 @@ resource "aws_eip" "natgwip" {
 ## Nat Gateway
 
 resource "aws_nat_gateway" "natgw" {
-  count = 2
+  count         = 2
   allocation_id = element(aws_eip.natgwip.*.id, count.index)
-  subnet_id = element(aws_subnet.subnet_public.*.id, count.index)
+  subnet_id     = element(aws_subnet.subnet_public.*.id, count.index)
   depends_on    = [aws_internet_gateway.main_igw]
 
   tags = merge(
@@ -163,7 +163,7 @@ resource "aws_nat_gateway" "natgw" {
 ## Route Tables
 
 resource "aws_route_table" "routetable_public" {
-  vpc_id            = aws_vpc.main_vpc.id
+  vpc_id = aws_vpc.main_vpc.id
   route {
     cidr_block = "0.0.0.0/0"
     gateway_id = aws_internet_gateway.main_igw.id
@@ -172,17 +172,17 @@ resource "aws_route_table" "routetable_public" {
   tags = merge(
     local.tags,
     {
-      Name = "Public Route Table"
+      Name             = "Public Route Table"
       PublicRouteTable = "true"
     }
   )
 }
 
 resource "aws_route_table" "routetable_private" {
-  vpc_id            = aws_vpc.main_vpc.id
-  count = 2
+  vpc_id = aws_vpc.main_vpc.id
+  count  = 2
   route {
-    cidr_block = "0.0.0.0/0"
+    cidr_block     = "0.0.0.0/0"
     nat_gateway_id = element(aws_nat_gateway.natgw.*.id, count.index)
   }
 
@@ -199,14 +199,14 @@ resource "aws_route_table" "routetable_private" {
 ## Route Table Associations
 
 resource "aws_route_table_association" "routetableassociation_public" {
-  count = 2
-  subnet_id = element(aws_subnet.subnet_public.*.id, count.index)
+  count          = 2
+  subnet_id      = element(aws_subnet.subnet_public.*.id, count.index)
   route_table_id = aws_route_table.routetable_public.id
 }
 
 resource "aws_route_table_association" "routetableassociation_private" {
-  count = 2
-  subnet_id = element(aws_subnet.subnet_private.*.id, count.index)
+  count          = 2
+  subnet_id      = element(aws_subnet.subnet_private.*.id, count.index)
   route_table_id = element(aws_route_table.routetable_private.*.id, count.index)
 }
 
@@ -215,7 +215,7 @@ resource "aws_route_table_association" "routetableassociation_private" {
 ## SSM 
 
 resource "aws_ssm_association" "ssm_install" {
-  name = "AWS-UpdateSSMAgent"
+  name             = "AWS-UpdateSSMAgent"
   association_name = "Onboarding2020-SystemAssociationForSsmAgentUpdate"
   targets {
     key    = "InstanceIds"

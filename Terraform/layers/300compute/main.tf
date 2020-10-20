@@ -68,14 +68,14 @@ resource "aws_key_pair" "mykp" {
 ## ELB Target Group
 
 resource "aws_lb_target_group" "elb_target_group" {
-  name = "Onboarding2020-ELB-TG"
-  port = 80
+  name     = "Onboarding2020-ELB-TG"
+  port     = 80
   protocol = "HTTP"
-  vpc_id = data.terraform_remote_state.state_000base.outputs.vpc_id
+  vpc_id   = data.terraform_remote_state.state_000base.outputs.vpc_id
   health_check {
-    enabled = true
-    path = "/"
-    port = "80"
+    enabled  = true
+    path     = "/"
+    port     = "80"
     interval = 30
   }
 }
@@ -85,12 +85,12 @@ resource "aws_lb_target_group" "elb_target_group" {
 ## ELB
 
 resource "aws_lb" "myelb" {
-  name = "Onboarding2020-ELB"
+  name               = "Onboarding2020-ELB"
   load_balancer_type = "application"
-  subnets = data.terraform_remote_state.state_000base.outputs.subnet_public
-  security_groups = [data.terraform_remote_state.state_100security.outputs.sg_alb]
-  ip_address_type = "ipv4"
-  internal = false
+  subnets            = data.terraform_remote_state.state_000base.outputs.subnet_public
+  security_groups    = [data.terraform_remote_state.state_100security.outputs.sg_alb]
+  ip_address_type    = "ipv4"
+  internal           = false
 }
 
 
@@ -99,10 +99,10 @@ resource "aws_lb" "myelb" {
 
 resource "aws_lb_listener" "myelblistener" {
   load_balancer_arn = aws_lb.myelb.arn
-  port = 80
-  protocol = "HTTP"
+  port              = 80
+  protocol          = "HTTP"
   default_action {
-    type = "forward"
+    type             = "forward"
     target_group_arn = aws_lb_target_group.elb_target_group.arn
   }
 }
@@ -112,9 +112,9 @@ resource "aws_lb_listener" "myelblistener" {
 ## ASG Launch Template
 
 resource "aws_launch_template" "mylaunchtemplate" {
-  image_id = var.ami_type_linux
-  instance_type = var.instance_type
-  key_name = aws_key_pair.mykp.id
+  image_id               = var.ami_type_linux
+  instance_type          = var.instance_type
+  key_name               = aws_key_pair.mykp.id
   vpc_security_group_ids = [data.terraform_remote_state.state_100security.outputs.sg_web]
   user_data = base64encode(
     templatefile(
@@ -133,20 +133,20 @@ resource "aws_launch_template" "mylaunchtemplate" {
 ## ASG
 
 resource "aws_autoscaling_group" "myasg" {
-  name = "Onboarding2020-ASG"
-  max_size = var.autoscale_max
-  min_size = var.autoscale_max
-  target_group_arns = [aws_lb_target_group.elb_target_group.arn]
+  name                = "Onboarding2020-ASG"
+  max_size            = var.autoscale_max
+  min_size            = var.autoscale_max
+  target_group_arns   = [aws_lb_target_group.elb_target_group.arn]
   vpc_zone_identifier = data.terraform_remote_state.state_000base.outputs.subnet_private
-  health_check_type = "EC2"
+  health_check_type   = "EC2"
   launch_template {
-    name = aws_launch_template.mylaunchtemplate.name
+    name    = aws_launch_template.mylaunchtemplate.name
     version = "$Default"
   }
 
   tag {
-    key = "Name"
-    value = "EC2-Linux"
+    key                 = "Name"
+    value               = "EC2-Linux"
     propagate_at_launch = true
   }
 }
