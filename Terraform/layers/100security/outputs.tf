@@ -16,3 +16,8 @@ output "sg_alb" {
   value       = aws_security_group.sg_alb.id
   description = "The ID of the RDS Group"
 }
+
+output "sg_testing" {
+  value       = aws_security_group.sg_testing.id
+  description = "The ID of the Testing Group"
+}

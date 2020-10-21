@@ -1,12 +1,5 @@
 /**
  * # 200data - main.tf
-
- RDS Limits
-ONLY these Instance Types are allowed:
-db.t2.micro to db.t2.medium
-db.t3.micro to db.t3.medium
-Cannot use Provisioned IOPS
-Max Storage size of 50GB
  */
 
 
@@ -60,6 +53,12 @@ data "terraform_remote_state" "state_100security" {
 resource "aws_db_subnet_group" "myrdsgroup" {
   name       = "my-rds-subnet-group"
   subnet_ids = data.terraform_remote_state.state_000base.outputs.subnet_private
+
+  tags = merge(
+    local.tags, {
+      "Name" = "Onboarding2020-RDS-SBG"
+    }
+  )
 }
 
 
@@ -83,6 +82,8 @@ resource "aws_db_instance" "myrdsinstance" {
   vpc_security_group_ids = [data.terraform_remote_state.state_100security.outputs.sg_rds]
 
   tags = merge(
-    local.tags
+    local.tags, {
+      "Name" = "Onboarding2020-RDS"
+    }
   )
 }

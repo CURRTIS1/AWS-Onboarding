@@ -3,5 +3,5 @@
  */
 
 region      = "us-east-1"
-environment = "Dev"
+environment = "dev"
 layer       = "200data"

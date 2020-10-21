@@ -2,11 +2,9 @@
  * # 000base - terraform.tfvars
  */
 
-region = "us-east-1"
-
-environment = "Dev"
-
-layer = "000base"
+region      = "us-east-1"
+environment = "dev"
+layer       = "000base"
 
 vpc_cidr = "172.16.0.0/16"
 

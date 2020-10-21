@@ -58,6 +58,12 @@ resource "aws_security_group" "sg_alb" {
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
+
+  tags = merge(
+    local.tags, {
+      "Name" = "ALB Security Group"
+    }
+  )
 }
 
 resource "aws_security_group" "sg_web" {
@@ -77,6 +83,12 @@ resource "aws_security_group" "sg_web" {
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
+
+  tags = merge(
+    local.tags, {
+      "Name" = "WEB Security Group"
+    }
+  )
 }
 
 resource "aws_security_group" "sg_rds" {
@@ -90,4 +102,42 @@ resource "aws_security_group" "sg_rds" {
     protocol        = "tcp"
     security_groups = [aws_security_group.sg_web.id]
   }
+
+  tags = merge(
+    local.tags, {
+      "Name" = "RDS Security Group"
+    }
+  )
+}
+
+resource "aws_security_group" "sg_testing" {
+  name        = "SSH/RDP test"
+  description = "SSH/RDP test"
+  vpc_id      = data.terraform_remote_state.state_000base.outputs.vpc_id
+  ingress {
+    description = "Port 80 from the internet"
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+  ingress {
+    description = "Port 80 from the internet"
+    from_port   = 3389
+    to_port     = 3389
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = merge(
+    local.tags, {
+      "Name" = "Test Security Group"
+    }
+  )
 }
