@@ -24,7 +24,7 @@ variable "ami_type_linux" {
 
 variable "ami_type_windows" {
   description = "The AMI to use"
-  default     = "ami-0eb7fbcc77e5e6ec6"
+  default     = "ami-0e315da6b15c55161"
 }
 
 variable "autoscale_max" {
@@ -39,7 +39,7 @@ variable "autoscale_min" {
 
 variable "instance_type" {
   description = "The type of EC2 instance to use"
-  default     = "t2.micro"
+  default     = "t3.small"
 }
 
 variable "alb_name" {
